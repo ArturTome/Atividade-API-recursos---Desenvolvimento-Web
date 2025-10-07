@@ -5,15 +5,50 @@ const port = 3000;
 app.use(express.json());
 
 let comidas = [
-	{ id: 1, nome: 'Maça'},
-	{ id: 2, nome: 'Frango'},
-	{ id: 3, nome: 'Feijão'},
-	{ id: 4, nome: 'Biscoito'}
+	{ id: 1, nome: 'Maça', codigo: 890},
+	{ id: 2, nome: 'Frango', codigo: 1523},
+	{ id: 3, nome: 'Feijão', codigo: 2110},
+	{ id: 4, nome: 'Biscoito', codigo: 1805}
 ];
 
 app.get('/comidas', (req, res) => {
 	res.json(comidas);
 });
+
+app.get('/comidas/primeira', (req, res) => {
+	if (comidas.length > 0) {
+		res.json(comidas[0]);
+	} else {
+		res.status(404).json({ error: 'Comida não encontrada.'});
+	}
+});
+
+app.get('/comidas/ultima', (req, res) => {
+	if (comidas.length > 0) {
+		res.json(comidas[comidas.length -1]);
+	} else {
+		res.status(404).json({ error: 'Comida não encontrada.'});
+	}
+});
+app.get('/comidas/par', (req, res) => {
+	const pares = comidas.filter(m => m.codigo%2 === 0)
+    if (pares){
+        res.json(pares);
+    }else{
+        res.status(404).json({ error: 'comida não encontrada'})
+    }
+    }
+);
+
+app.get('/comidas/impar', (req, res) => {
+	const impares = comidas.filter(m => m.codigo%2 !== 0)
+    if (impares){
+        res.json(impares);
+    }else{
+        res.status(404).json({ error: 'comida não encontrada'})
+    }
+    }
+);
 
 app.get('/comidas/:id', (req, res) => {
 	const id = parseInt(req.params.id);
@@ -43,21 +78,21 @@ app.put('/comidas/:id', (req, res) => {
 		comida.nome = nome;
 		res.json(comida)
 	} else {
-		res.status().json({ error: 'Comida não encontrada.'});
+		res.status(404).json({ error: 'Comida não encontrada.'});
 	}
 })
 
 app.delete('/comidas/:id', (req, res) => {
 	const id = parseInt(req.params.id);
-	const index = pessoas.findIndex(i => i.id === id);
+	const index = comidas.findIndex(i => i.id === id);
 	if (index !== -1){
 		const comidaDeletada = comidas.splice(index, 1)
 		res.json(comidaDeletada[0])
 	} else {
-		res.status().json({ error: 'Comida não encontrada.'});
+		res.status(404).json({ error: 'Comida não encontrada.'});
 	}
 })
 
 app.listen(port, () => {
-	console.log('Servisor em execução: http://localhost:${port}');
+	console.log(`Servidor em execução: http://localhost:${port}`);
 });
